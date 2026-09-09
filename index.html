@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Feeder Companion — Unofficial Bird Buddy Setup & User Guide</title>
+<meta name="description" content="An independent setup and troubleshooting guide for the Bird Buddy smart feeder. Pairing steps, AI bird ID, postcards, full specs, and fixes for common problems.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F5F1E3;
+    --card:#FFFDF7;
+    --ink:#20303B;
+    --ink-soft:#5B6B63;
+    --cardinal:#D64545;
+    --cardinal-deep:#AD3434;
+    --goldfinch:#F2B705;
+    --leaf:#4F7942;
+    --leaf-deep:#3A5A30;
+    --line: rgba(32,48,59,0.14);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    font-size:16px;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.wordmark{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    letter-spacing:-0.01em;
+    margin:0;
+    color:var(--ink);
+  }
+  a{color:inherit;}
+  img,svg{display:block;max-width:100%;}
+  .wrap{ max-width:1160px; margin:0 auto; padding:0 32px; }
+  @media (max-width:640px){ .wrap{padding:0 20px;} }
+
+  /* ---------- NAV ---------- */
+  nav{
+    position:sticky; top:0; z-index:20;
+    background:rgba(245,241,227,0.9);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  nav .wrap{ display:flex; align-items:center; justify-content:space-between; height:68px; }
+  .wordmark{font-size:19px; display:flex; align-items:center; gap:9px; font-weight:600;}
+  .wordmark .mark{ color:var(--cardinal); }
+  .nav-links{display:flex; gap:28px; font-size:14px; color:var(--ink-soft); font-family:'Inter',sans-serif;}
+  .nav-links a:hover{color:var(--ink);}
+  .nav-cta{
+    background:var(--leaf-deep); color:var(--paper); font-weight:600; font-size:14px;
+    padding:9px 18px; border-radius:20px; text-decoration:none; font-family:'Inter',sans-serif;
+  }
+  @media (max-width:700px){ .nav-links{display:none;} }
+
+  /* ---------- HERO ---------- */
+  .hero{ padding:76px 0 40px; }
+  .hero-grid{ display:grid; grid-template-columns:1.05fr 0.95fr; gap:56px; align-items:center; }
+  @media (max-width:900px){ .hero-grid{grid-template-columns:1fr;} }
+
+  .eyebrow-line{ display:flex; align-items:center; gap:10px; color:var(--ink-soft); font-size:13px; margin-bottom:22px; font-family:'Inter',sans-serif;}
+  .eyebrow-line span.rule{width:28px;height:1px;background:var(--ink-soft);display:inline-block; opacity:0.5;}
+
+  .hero h1{ font-size:clamp(34px,5vw,54px); line-height:1.08; }
+  .hero h1 em{ font-style:italic; color:var(--cardinal); }
+  .hero p.lede{ margin-top:22px; max-width:46ch; color:var(--ink-soft); font-size:17px; }
+  .hero-ctas{ display:flex; gap:14px; margin-top:34px; flex-wrap:wrap; font-family:'Inter',sans-serif;}
+  .btn-primary{
+    background:var(--cardinal); color:#fff; font-weight:600; font-size:15px;
+    padding:14px 26px; border-radius:24px; text-decoration:none; display:inline-block;
+  }
+  .btn-ghost{
+    border:1px solid var(--ink); color:var(--ink); font-weight:500; font-size:15px;
+    padding:14px 26px; border-radius:24px; text-decoration:none; display:inline-block;
+  }
+  .hero-note{ margin-top:20px; font-size:13px; color:var(--ink-soft); font-family:'Inter',sans-serif;}
+
+  /* ---------- postcard stack graphic ---------- */
+  .postcard-stack{ position:relative; height:400px; max-width:420px; margin:0 auto; }
+  .postcard{
+    position:absolute; width:270px; background:var(--card);
+    border:1px solid var(--line); border-radius:6px;
+    box-shadow:0 14px 30px rgba(32,48,59,0.14);
+    padding:14px;
+  }
+  .postcard.p1{ top:0; left:6%; transform:rotate(-7deg); z-index:1; }
+  .postcard.p2{ top:26px; left:32%; transform:rotate(4deg); z-index:2; }
+  .postcard.p3{ top:64px; left:14%; transform:rotate(-2deg); z-index:3; }
+  .postcard .photo{
+    height:150px; border-radius:3px;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .postcard.p1 .photo{ background:linear-gradient(135deg,#EFD9A8,#D9A64A); }
+  .postcard.p2 .photo{ background:linear-gradient(135deg,#CFE3D0,#7FA87F); }
+  .postcard.p3 .photo{ background:linear-gradient(135deg,#F6D3C7,#E08862); }
+  .postcard .caption{
+    display:flex; justify-content:space-between; align-items:center;
+    margin-top:10px; font-family:'Inter',sans-serif;
+  }
+  .postcard .species{ font-size:12.5px; font-weight:600; color:var(--ink); }
+  .postcard .time{ font-size:10.5px; color:var(--ink-soft); }
+  .stamp{
+    position:absolute; top:10px; right:10px;
+    width:26px; height:32px; border:1.5px dashed var(--cardinal);
+    border-radius:2px; display:flex; align-items:center; justify-content:center;
+  }
+  .stamp svg{ width:14px; height:14px; }
+
+  /* ---------- STATS STRIP ---------- */
+  .stats{ border-top:1px solid var(--line); border-bottom:1px solid var(--line); padding:26px 0; }
+  .stats .wrap{ display:grid; grid-template-columns:repeat(4,1fr); gap:24px; }
+  @media (max-width:700px){ .stats .wrap{grid-template-columns:repeat(2,1fr);} }
+  .stat b{ font-family:'Fraunces',serif; font-size:24px; display:block; }
+  .stat span{ font-size:13px; color:var(--ink-soft); font-family:'Inter',sans-serif;}
+
+  /* ---------- SECTION HEADERS ---------- */
+  section{ padding:84px 0; }
+  .section-head{ max-width:56ch; margin-bottom:48px; }
+  .section-head h2{ font-size:clamp(26px,3.4vw,36px); }
+  .section-head p{ margin-top:14px; color:var(--ink-soft); font-size:15.5px; font-family:'Inter',sans-serif;}
+
+  /* ---------- FEATURES ---------- */
+  .feature-list{ border-top:1px solid var(--line); }
+  .feature-row{
+    display:grid; grid-template-columns:44px 1fr 1.4fr; gap:28px;
+    padding:26px 0; border-bottom:1px solid var(--line); align-items:start;
+  }
+  @media (max-width:760px){
+    .feature-row{ grid-template-columns:36px 1fr; }
+    .feature-row .feature-desc{ grid-column:2/3; }
+  }
+  .feature-icon{ color:var(--cardinal); }
+  .feature-row h3{ font-size:19px; font-family:'Inter',sans-serif; font-weight:600; }
+  .feature-desc{ color:var(--ink-soft); font-size:14.5px; font-family:'Inter',sans-serif;}
+
+  /* ---------- STEPS ---------- */
+  .steps{ background:var(--leaf-deep); color:var(--paper); }
+  .steps .section-head h2, .steps .section-head p{ color:var(--paper); }
+  .steps .section-head p{ color:#D9E4D4; }
+  .step-path{ display:flex; flex-direction:column; }
+  .step-item{
+    display:grid; grid-template-columns:64px 1fr; gap:24px;
+    padding:22px 0; border-bottom:1px solid rgba(245,241,227,0.16);
+  }
+  .step-item:last-child{ border-bottom:none; }
+  .step-item .num{ font-family:'Fraunces',serif; font-size:22px; color:var(--goldfinch); }
+  .step-item h4{ font-size:16.5px; color:var(--paper); font-family:'Inter',sans-serif; font-weight:600; }
+  .step-item p{ margin-top:6px; font-size:14px; color:#D9E4D4; max-width:60ch; font-family:'Inter',sans-serif;}
+
+  /* ---------- FAQ PREVIEW ---------- */
+  .faq-row{ display:grid; grid-template-columns:1fr 1fr; gap:0; border-top:1px solid var(--line); }
+  @media (max-width:760px){ .faq-row{grid-template-columns:1fr;} }
+  .faq-item{ padding:24px 28px; border-bottom:1px solid var(--line); }
+  .faq-item:nth-child(odd){ border-right:1px solid var(--line); }
+  @media (max-width:760px){ .faq-item:nth-child(odd){ border-right:none; } }
+  .faq-item h4{ font-size:15px; font-weight:600; font-family:'Inter',sans-serif; }
+  .faq-item p{ margin-top:8px; font-size:13.5px; color:var(--ink-soft); font-family:'Inter',sans-serif;}
+
+  /* ---------- RETAILERS ---------- */
+  .retailer-strip{ display:flex; gap:14px; flex-wrap:wrap; margin-top:28px; font-family:'Inter',sans-serif;}
+  .retailer-chip{
+    border:1px solid var(--ink); border-radius:999px; padding:9px 18px;
+    font-size:13.5px; font-weight:500; display:flex; align-items:center; gap:8px;
+  }
+  .retailer-chip .rc-dot{ width:6px;height:6px;border-radius:50%; background:var(--cardinal); }
+
+  /* ---------- DISCLAIMER ---------- */
+  .disclaimer{ background:var(--card); border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+  .disclaimer .wrap{ display:flex; gap:20px; align-items:flex-start; padding:26px 32px; }
+  .disclaimer svg{ flex-shrink:0; margin-top:2px; }
+  .disclaimer p{ font-size:14.5px; margin:0; max-width:70ch; color:var(--ink-soft); font-family:'Inter',sans-serif;}
+  .disclaimer strong{ font-weight:700; color:var(--ink); }
+
+  /* ---------- CTA BAND ---------- */
+  .cta-band .inner{
+    background:var(--card); border:1px solid var(--line); border-radius:20px;
+    padding:56px 48px; display:flex; align-items:center; justify-content:space-between;
+    gap:32px; flex-wrap:wrap;
+  }
+  .cta-band h2{ font-size:28px; max-width:420px; }
+  .cta-band p{ color:var(--ink-soft); margin-top:10px; font-family:'Inter',sans-serif;}
+
+  /* ---------- FOOTER ---------- */
+  footer{ border-top:1px solid var(--line); padding:40px 0; font-family:'Inter',sans-serif;}
+  footer .wrap{ display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px; }
+  footer .foot-links{ display:flex; gap:22px; font-size:13.5px; color:var(--ink-soft); }
+  footer .foot-links a:hover{ color:var(--ink); }
+  footer .copy{ font-size:13px; color:var(--ink-soft); }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <div class="wordmark"><span class="mark">◆</span>Feeder Companion</div>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#setup">Setup</a>
+      <a href="#buy">Where to buy</a>
+    </div>
+    <a class="nav-cta" href="#get">Get the guide</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="eyebrow-line"><span class="rule"></span> Unofficial guide · not affiliated with Bird Buddy</div>
+      <h1>Every visit, <em>explained.</em></h1>
+      <p class="lede">Pair your Bird Buddy smart feeder without the guesswork, understand every postcard and feature, and fix the problems people actually run into.</p>
+      <div class="hero-ctas">
+        <a class="btn-primary" href="#get" id="get">Get the app</a>
+        <a class="btn-ghost" href="#features">See what's inside</a>
+      </div>
+      <p class="hero-note">Free · Android · No account needed</p>
+    </div>
+
+    <div class="postcard-stack" aria-hidden="true">
+      <div class="postcard p1">
+        <div class="photo"></div>
+        <div class="caption"><span class="species">Northern Cardinal</span><span class="time">8:14 AM</span></div>
+        <div class="stamp"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3l8 4v5c0 5-3.5 7.5-8 9-4.5-1.5-8-4-8-9V7l8-4z" stroke="#D64545" stroke-width="1.8"/></svg></div>
+      </div>
+      <div class="postcard p2">
+        <div class="photo"></div>
+        <div class="caption"><span class="species">Blue Jay</span><span class="time">Yesterday</span></div>
+        <div class="stamp"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3l8 4v5c0 5-3.5 7.5-8 9-4.5-1.5-8-4-8-9V7l8-4z" stroke="#D64545" stroke-width="1.8"/></svg></div>
+      </div>
+      <div class="postcard p3">
+        <div class="photo"></div>
+        <div class="caption"><span class="species">Mystery Visitor</span><span class="time">2 days ago</span></div>
+        <div class="stamp"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3l8 4v5c0 5-3.5 7.5-8 9-4.5-1.5-8-4-8-9V7l8-4z" stroke="#D64545" stroke-width="1.8"/></svg></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="stats">
+  <div class="wrap">
+    <div class="stat"><b>AI ID</b><span>species recognition</span></div>
+    <div class="stat"><b>Solar</b><span>trickle-charge roof</span></div>
+    <div class="stat"><b>HD</b><span>photo & video capture</span></div>
+    <div class="stat"><b>Cloud</b><span>postcard storage</span></div>
+  </div>
+</div>
+
+<section id="features">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>What's inside the guide</h2>
+      <p>Four sections that cover the feeder end to end — written for people who just want it working, not a spec sheet to decode.</p>
+    </div>
+
+    <div class="feature-list">
+      <div class="feature-row">
+        <div class="feature-icon">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M12 18a1.5 1.5 0 100 3 1.5 1.5 0 000-3z" fill="currentColor"/><path d="M8.5 14.5a5 5 0 017 0M5.5 11a9.5 9.5 0 0113 0" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        </div>
+        <h3>Pairing, step by step</h3>
+        <p class="feature-desc">Charging the camera, creating your account, clicking the module in until it chirps, joining 2.4GHz WiFi, and waiting out that first firmware update.</p>
+      </div>
+
+      <div class="feature-row">
+        <div class="feature-icon">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M12 3l8 4v5c0 5-3.5 7.5-8 9-4.5-1.5-8-4-8-9V7l8-4z" stroke="currentColor" stroke-width="1.6"/></svg>
+        </div>
+        <h3>Features & settings</h3>
+        <p class="feature-desc">AI bird species ID, how Postcards work, what "Mystery Visitor" means, the solar roof panel, and the magnetic camera module.</p>
+      </div>
+
+      <div class="feature-row">
+        <div class="feature-icon">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M4 5h16M4 12h16M4 19h10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        </div>
+        <h3>Full specifications</h3>
+        <p class="feature-desc">Camera capture, detachable module, WiFi band requirements, charge times, and cloud storage — all in one reference.</p>
+      </div>
+
+      <div class="feature-row">
+        <div class="feature-icon">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M12 3l9 16H3l9-16z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M12 10v4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="12" cy="17" r="1" fill="currentColor"/></svg>
+        </div>
+        <h3>Troubleshooting</h3>
+        <p class="feature-desc">Fixes for the issues people search for most: pairing stalls, WiFi that won't connect, blinking lights, missing postcards, and fast battery drain.</p>
+      </div>
+
+      <div class="feature-row">
+        <div class="feature-icon">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><circle cx="9" cy="20" r="1.4" fill="currentColor"/><circle cx="18" cy="20" r="1.4" fill="currentColor"/><path d="M3 4h2l2.2 11.4a2 2 0 002 1.6h8.6a2 2 0 002-1.7L21 8H6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h3>Where to buy</h3>
+        <p class="feature-desc">A quick price comparison across Amazon, the official store, and Target — so you're not stuck guessing which listing is the better deal.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="steps" id="setup">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Paired up in five steps</h2>
+      <p>The exact sequence the guide walks you through — from an empty box to your first postcard.</p>
+    </div>
+    <div class="step-path">
+      <div class="step-item"><div class="num">01</div><div><h4>Charge the camera first</h4><p>Fully charge the camera module before pairing — an undercharged unit is a common cause of a stalled setup.</p></div></div>
+      <div class="step-item"><div class="num">02</div><div><h4>Create your account & start pairing</h4><p>Open the app, sign up, and choose "Start with a new Birdbuddy." Allow Bluetooth & Location when prompted.</p></div></div>
+      <div class="step-item"><div class="num">03</div><div><h4>Insert the camera & wait for the chirp</h4><p>Snap the module into the feeder until it clicks and the alignment lines are straight.</p></div></div>
+      <div class="step-item"><div class="num">04</div><div><h4>Connect to your 2.4GHz WiFi</h4><p>2.4GHz is more reliable outdoors than 5GHz, even on models that support both.</p></div></div>
+      <div class="step-item"><div class="num">05</div><div><h4>Let the firmware update finish</h4><p>Keep it powered and nearby until this completes — then your first postcard is on its way.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Answers to the questions people actually ask</h2>
+      <p>A preview of what's covered in the troubleshooting section.</p>
+    </div>
+  </div>
+  <div class="wrap" style="padding:0;">
+    <div class="faq-row">
+      <div class="faq-item"><h4>App can't find the camera while pairing</h4><p>Reinsert the camera module until it clicks, keep your phone close, and confirm Bluetooth + Location are allowed.</p></div>
+      <div class="faq-item"><h4>WiFi step won't connect</h4><p>Move the feeder closer to your router for setup, and connect to a 2.4GHz network specifically.</p></div>
+      <div class="faq-item"><h4>Blinking red or orange light</h4><p>Red usually means low charge. Orange/yellow can signal a firmware issue — contact Bird Buddy support if it persists.</p></div>
+      <div class="faq-item"><h4>Missing postcards</h4><p>Check the feeder's WiFi signal strength and make sure app notifications are turned on.</p></div>
+    </div>
+  </div>
+</section>
+
+<div class="disclaimer">
+  <div class="wrap">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 3l9 16H3l9-16z" stroke="#20303B" stroke-width="1.6" stroke-linejoin="round"/><path d="M12 10v4" stroke="#20303B" stroke-width="1.6" stroke-linecap="round"/><circle cx="12" cy="17" r="1" fill="#20303B"/></svg>
+    <p><strong>Independent, unofficial guide.</strong> Feeder Companion is not made, endorsed, or affiliated with Bird Buddy. It's a third-party reference built to make setup and everyday use easier.</p>
+  </div>
+</div>
+
+<section id="buy">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Where people buy it</h2>
+      <p>Approximate pricing the app compares before you choose a listing.</p>
+    </div>
+    <div class="retailer-strip">
+      <div class="retailer-chip"><span class="rc-dot"></span>Amazon · ~$259</div>
+      <div class="retailer-chip"><span class="rc-dot"></span>Official store · ~$259</div>
+      <div class="retailer-chip"><span class="rc-dot"></span>Target · ~$269</div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-band">
+  <div class="wrap">
+    <div class="inner">
+      <div>
+        <h2>Stop guessing, start birding.</h2>
+        <p>Free to download. No account, no clutter — just the guide.</p>
+      </div>
+      <a class="btn-primary" href="#">Download for Android</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="wordmark" style="font-size:15px;"><span class="mark">◆</span>Feeder Companion</div>
+    <div class="foot-links">
+      <a href="privacy-policy.html">Privacy Policy</a>
+      <a href="mailto:support@feedercompanion.app">Contact</a>
+    </div>
+    <div class="copy">© 2026 Feeder Companion. Not affiliated with Bird Buddy.</div>
+  </div>
+</footer>
+
+</body>
+</html>
